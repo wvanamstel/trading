@@ -11,14 +11,14 @@ class MinuteData(object):
         IN: all strings; symbol, interval in secs, time period, open/close/etc
         OUT: data frame with historical minute prices
     '''
-    def __init__(self, symbol, interval='60', period='2d', dat='d,o,h,l,c,v'):
+    def __init__(self, symbol, interval='60', period='5d', dat='d,o,h,l,c,v'):
         self.symbol = symbol.upper()
         self.interval = float(interval)
         self.url = 'http://www.google.com/finance/getprices?' + \
                    'i=' + interval + \
                    '&p=' + period + \
                    '&f=' + dat + \
-                   '&q=' + symbol
+                   '&q=' + symbol.upper()
 
     def get_data(self):
         print 'Fetching data'
@@ -58,7 +58,6 @@ class MinuteData(object):
 
         return quotes_out
 
-if __name__ ==  '__main__':
-    a = MinuteData('MSFT')
+if __name__ == '__main__':
+    a = MinuteData('msft')
     test = a.get_data()
-    
