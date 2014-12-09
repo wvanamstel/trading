@@ -11,21 +11,20 @@ class MinuteData(object):
         IN: all strings; symbol, interval in secs, time period, open/close/etc
         OUT: data frame with historical minute prices
     '''
-    def __init__(self, symbol, interval='60', period='5d', dat='d,o,h,l,c,v'):
-        self.symbol = symbol
-        self.interval = interval
-        self.period = period
-        self.dat = dat
+    def __init__(self, interval='60', period='5d', dat='d,o,h,l,c,v'):
+        self.interval = interval  # default is 60 seconds
+        self.period = period  # number of days history, default is 5
+        self.dat = dat  # 'date', 'open', 'high', etc
         
-    def get_data(self):
+    def get_data(self, symbol):
         print 'Fetching data'
         
-        self.url = 'http://www.google.com/finance/getprices?' + \
+        url = 'http://www.google.com/finance/getprices?' + \
                    'i=' + self.interval + \
                    '&p=' + self.period + \
                    '&f=' + self.dat + \
-                   '&q=' + self.symbol.upper()
-        request = urllib2.Request(self.url)
+                   '&q=' + symbol.upper()
+        request = urllib2.Request(url)
         raw_data = urllib2.urlopen(request).readlines()
         raw_data = raw_data[7:]  # strip headers from received data
 
@@ -60,8 +59,20 @@ class MinuteData(object):
         quotes_out = quotes_out[cols_target]
 
         return quotes_out
+        
+    def multiple_quotes(self, symbol_list):
+        ''' 
+        IN: list, symbols
+        OUT: data frame of closing prices of symbols
+        '''
+        quotes_out = pd.DataFrame()
+        for sym in symbol_list:
+            temp = self.get_data(sym)
+            quotes_out[sym.upper()] = temp['Close']
+        
+        return quotes_out
 
 
 if __name__ == '__main__':
-    a = MinuteData('jnpr')
-    test = a.get_data()
+    a = MinuteData(period='1d')
+    test = a.multiple_quotes(['jnpr', 'cien'])
