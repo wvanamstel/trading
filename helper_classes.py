@@ -12,16 +12,19 @@ class MinuteData(object):
         OUT: data frame with historical minute prices
     '''
     def __init__(self, symbol, interval='60', period='5d', dat='d,o,h,l,c,v'):
-        self.symbol = symbol.upper()
-        self.interval = float(interval)
-        self.url = 'http://www.google.com/finance/getprices?' + \
-                   'i=' + interval + \
-                   '&p=' + period + \
-                   '&f=' + dat + \
-                   '&q=' + symbol.upper()
-
+        self.symbol = symbol
+        self.interval = interval
+        self.period = period
+        self.dat = dat
+        
     def get_data(self):
         print 'Fetching data'
+        
+        self.url = 'http://www.google.com/finance/getprices?' + \
+                   'i=' + self.interval + \
+                   '&p=' + self.period + \
+                   '&f=' + self.dat + \
+                   '&q=' + self.symbol.upper()
         request = urllib2.Request(self.url)
         raw_data = urllib2.urlopen(request).readlines()
         raw_data = raw_data[7:]  # strip headers from received data
@@ -38,7 +41,7 @@ class MinuteData(object):
                 date_base = float(line[0].strip('a'))
                 date_offset = 0
             else:
-                date_offset = float(line[0]) * self.interval
+                date_offset = float(line[0]) * float(self.interval)
 
             time_stamps.append(time.strftime('%Y-%m-%d %H:%M:%S',
                                              time.localtime(date_base +
@@ -58,6 +61,7 @@ class MinuteData(object):
 
         return quotes_out
 
+
 if __name__ == '__main__':
-    a = MinuteData('msft')
+    a = MinuteData('jnpr')
     test = a.get_data()

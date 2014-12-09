@@ -48,7 +48,7 @@ class MavgPortfolio(Portfolio):
         pos_diff = self.pos.diff()
         
         portfolio['holdings'] = (self.pos*self.bars['Open']).sum(axis=1)
-        portfolio['cash'] = self.init_capital - (self.pos*self.bars['Open']).sum(axis=1).cumsum()
+        portfolio['cash'] = self.init_capital - (pos_diff*self.bars['Open']).sum(axis=1).cumsum()
         portfolio['total'] = portfolio['cash'] + portfolio['holdings']
         portfolio['returns'] = portfolio['total'].pct_change()
         
