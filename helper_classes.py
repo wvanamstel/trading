@@ -6,7 +6,7 @@ import urllib2
 import time
 
 
-class MinuteData(object):
+class GetData(object):
     ''' Fetch minute data from Google
         IN: all strings; symbol, interval in secs, time period, open/close/etc
         OUT: data frame with historical minute prices
@@ -16,7 +16,7 @@ class MinuteData(object):
         self.period = period  # number of days history, default is 5
         self.dat = dat  # 'date', 'open', 'high', etc
         
-    def get_data(self, symbol):
+    def get_minute_data(self, symbol):
         print 'Fetching data'
         
         url = 'http://www.google.com/finance/getprices?' + \
@@ -54,13 +54,17 @@ class MinuteData(object):
 
         cols_raw = ['Close', 'High', 'Low', 'Open', 'Volume']
         quotes_out = pd.DataFrame(quotes, index = time_stamps, columns=cols_raw)
+        quotes_out.index = pd.to_datetime(quotes_out.index, unit = 'm')
         # rearrange columns to normal order
         cols_target = ['Open', 'High', 'Low', 'Close', 'Volume']
         quotes_out = quotes_out[cols_target]
 
         return quotes_out
         
-    def multiple_quotes(self, symbol_list):
+    def get_daily_data(self, symbol):
+        pass
+        
+    def get_multiple_quotes(self, symbol_list):
         ''' 
         IN: list, symbols
         OUT: data frame of closing prices of symbols
@@ -74,5 +78,6 @@ class MinuteData(object):
 
 
 if __name__ == '__main__':
-    a = MinuteData(period='1d')
-    test = a.multiple_quotes(['jnpr', 'cien'])
+    a = MinuteData(period='3d')
+    lst = ['XLE']
+    test = a.get_data('CIEN')
