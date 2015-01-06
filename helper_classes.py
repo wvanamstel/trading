@@ -4,6 +4,7 @@ import numpy as np
 import pandas as pd
 import urllib2
 import time
+import re
 
 
 class GetData(object):
@@ -75,9 +76,30 @@ class GetData(object):
             quotes_out[sym.upper()] = temp['Close']
         
         return quotes_out
+     
+    def get_rt_quote(self, symbol):
+        
+        url = 'http://www.google.com/finance?&q=' + symbol
+        request = urllib2.Request(url)
+        result = urllib2.urlopen(request).read()
+        quote = re.search('id="ref_(.*?)">(.*?)<', result)
+        
+        if quote:
+            tmp = quote.group(2)
+            price = tmp.replace(',','')
+        else:
+            price = 'Error accessing google finance'
+            
+        return price
 
 
 if __name__ == '__main__':
-    a = MinuteData(period='3d')
+    a = GetData()
     lst = ['XLE']
-    test = a.get_data('CIEN')
+    for i in range(5):
+        for sym in ['CIEN', 'JNPR']:
+            print time.ctime()
+            print sym + ' ' + a.get_rt_quote(sym)
+        print '========================'
+        time.sleep(60)
+        
