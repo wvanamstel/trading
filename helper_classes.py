@@ -78,7 +78,10 @@ class GetData(object):
         return quotes_out
      
     def get_rt_quote(self, symbol):
-        
+        '''
+        IN: string; quote symbol
+        OUT: price and timestamp
+        '''
         url = 'http://www.google.com/finance?&q=' + symbol
         request = urllib2.Request(url)
         result = urllib2.urlopen(request).read()
@@ -90,7 +93,7 @@ class GetData(object):
         else:
             price = 'Error accessing google finance'
             
-        return price
+        return price, time.ctime()
 
 
 if __name__ == '__main__':
