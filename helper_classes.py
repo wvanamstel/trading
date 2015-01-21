@@ -12,14 +12,14 @@ class GetData(object):
         IN: all strings; symbol, interval in secs, time period, open/close/etc
         OUT: data frame with historical minute prices
     '''
-    def __init__(self, interval='60', period='5d', dat='d,o,h,l,c,v'):
+    def __init__(self, interval='60', period='1d', dat='d,o,h,l,c,v'):
         self.interval = interval  # default is 60 seconds
         self.period = period  # number of days history, default is 5
         self.dat = dat  # 'date', 'open', 'high', etc
-        
+
     def get_minute_data(self, symbol):
         print 'Fetching data'
-        
+
         url = 'http://www.google.com/finance/getprices?' + \
                    'i=' + self.interval + \
                    '&p=' + self.period + \
@@ -55,18 +55,18 @@ class GetData(object):
 
         cols_raw = ['Close', 'High', 'Low', 'Open', 'Volume']
         quotes_out = pd.DataFrame(quotes, index = time_stamps, columns=cols_raw)
-        quotes_out.index = pd.to_datetime(quotes_out.index, unit = 'm')
+        quotes_out.index = pd.to_datetime(quotes_out.index, unit='m')
         # rearrange columns to normal order
         cols_target = ['Open', 'High', 'Low', 'Close', 'Volume']
         quotes_out = quotes_out[cols_target]
 
         return quotes_out
-        
+
     def get_daily_data(self, symbol):
         pass
-        
+
     def get_multiple_quotes(self, symbol_list):
-        ''' 
+        '''
         IN: list, symbols
         OUT: data frame of closing prices of symbols
         '''
@@ -74,11 +74,12 @@ class GetData(object):
         for sym in symbol_list:
             temp = self.get_data(sym)
             quotes_out[sym.upper()] = temp['Close']
-        
+
         return quotes_out
-     
+
     def get_rt_quote(self, symbol):
         '''
+        Retrieve current quote from google finance
         IN: string; quote symbol
         OUT: price and timestamp
         '''
@@ -86,23 +87,26 @@ class GetData(object):
         request = urllib2.Request(url)
         result = urllib2.urlopen(request).read()
         quote = re.search('id="ref_(.*?)">(.*?)<', result)
-        
+
         if quote:
             tmp = quote.group(2)
-            price = tmp.replace(',','')
+            price = tmp.replace(',', '')
         else:
             price = 'Error accessing google finance'
-            
+
         return price, time.ctime()
 
 
 if __name__ == '__main__':
     a = GetData()
-    lst = ['XLE']
+    lst = ['EURUSD']
+    #test = a.get_minute_data('EURUSD')
+    
     for i in range(5):
         for sym in ['CIEN', 'JNPR']:
             print time.ctime()
-            print sym + ' ' + a.get_rt_quote(sym)
+            print sym + ' ' + a.get_rt_quote(sym)[0]
+            
         print '========================'
         time.sleep(60)
-        
+
