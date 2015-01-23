@@ -103,7 +103,7 @@ if __name__ == '__main__':
     #test = a.get_minute_data('EURUSD')
     
     for i in range(5):
-        for sym in ['CIEN', 'JNPR']:
+        for sym in ['EURUSD']:
             print time.ctime()
             print sym + ' ' + a.get_rt_quote(sym)[0]
             
