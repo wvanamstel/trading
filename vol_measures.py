@@ -14,12 +14,15 @@ class VolatilityMeasures(object):
     
     def close_close(self,data, window):
         log_return = (data['Close']/data['Close'].shift(1)).apply(np.log)
-        result = pd.rolling_std(log_return, window=window) * math.sqrt(252)
+        vol = pd.rolling_std(log_return, window=window) * math.sqrt(252)
+        vol.index = data['Date']
         
-        return result
+        return vol
         
 if __name__=='__main__':
     vol = VolatilityMeasures()
     data = pd.read_csv('/home/w/code/python/trading/data/50etf.csv')
     clcl = vol.close_close(data, 30)
-    
+    clcl2 = vol.close_close(data, 90)
+    clcl.plot()
+    #data['Close'].plot()
