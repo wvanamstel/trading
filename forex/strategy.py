@@ -16,6 +16,7 @@ class TestRandomStrategy(object):
         self.ticks = 0
         
     def calc_signals(self, event):
+        #stupid random buy/sell on every 5th tick
         if event.type = 'TICK':
             self.ticks += 1
             if self.ticks % 5 == 0:
