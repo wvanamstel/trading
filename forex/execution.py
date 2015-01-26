@@ -13,7 +13,7 @@ class Execution(object):
         self.domain = domain
         self.access_token = access_token
         self.account_id = account_id
-        self.conn = obtain_connection()
+        self.conn = self.obtain_connection()
         
     def obtain_connection(self):
         return httplib.HTTPSConnection(self.domain)
