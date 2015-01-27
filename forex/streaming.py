@@ -17,10 +17,11 @@ class StreamingForexPrices(object):
         self.access_token = access_token
         self.account_id = account_id
         self.instruments = instruments
-        self. events_queue = events_queue
+        self.events_queue = events_queue
         
     def connect_to_stream(self):
         try:
+            requests.packages.urllib.disable_warnings()
             s = requests.Session()
             url = 'https://' + self.domain + '/v1/prices'
             headers = {'Authorization' : 'Bearer ' + self.access_token}

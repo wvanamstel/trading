@@ -16,7 +16,9 @@ class Execution(object):
         self.conn = self.obtain_connection()
         
     def obtain_connection(self):
-        return httplib.HTTPSConnection(self.domain)
+        con = httplib.HTTPSConnection(self.domain)
+        print con
+        return con
         
     def execute_order(self, event):
         headers = {"Content-Type": "application/x-www-form-urlencoded",
