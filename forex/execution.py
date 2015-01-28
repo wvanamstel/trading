@@ -17,7 +17,7 @@ class Execution(object):
         
     def obtain_connection(self):
         con = httplib.HTTPSConnection(self.domain)
-        print con
+        print 'https connectie: ', con
         return con
         
     def execute_order(self, event):

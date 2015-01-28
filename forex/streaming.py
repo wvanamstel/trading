@@ -21,24 +21,24 @@ class StreamingForexPrices(object):
         
     def connect_to_stream(self):
         try:
-            requests.packages.urllib.disable_warnings()
             s = requests.Session()
-            url = 'https://' + self.domain + '/v1/prices'
+            url = "https://" + self.domain + "/v1/prices"
             headers = {'Authorization' : 'Bearer ' + self.access_token}
-            params = {'instruments' : self.instruments, 
-                      'account_id' : self.account_id}
+            params = {'instruments' : self.instruments, 'accountId' : self.account_id}
             req = requests.Request('GET', url, headers=headers, params=params)
             pre = req.prepare()
             resp = s.send(pre, stream=True, verify=False)
             return resp
         except Exception as e:
             s.close()
-            print 'Error connecting to quote stream:\n' + str(e)
+            print "Caught exception when connecting to stream\n" + str(e)
+
             
     def stream_to_queue(self):
         response = self.connect_to_stream()
         if response.status_code != 200:
             print 'Error connecting to quote stream'
+            print response.status_code
             return
         for line in response.iter_lines(1):
             if line:
