@@ -33,15 +33,15 @@ def trade(events, strategy, execution):
                     execution.execute_order(event)
         time.sleep(heartbeat)
         
-        
+
 if __name__ == '__main__':
     heartbeat = 0.5
     events = Queue.Queue()
-    
+
     # define instrument and size
     instrument = 'EUR_USD'
-    units = 10000
-    
+    units = 100
+
     # create oanda price streaming class providing authentication
     prices = StreamingForexPrices(STREAM_DOMAIN, ACCESS_TOKEN, ACCOUNT_ID,
                                   instrument, events)
@@ -59,3 +59,4 @@ if __name__ == '__main__':
     # start threads
     trade_thread.start()
     price_thread.start()
+    

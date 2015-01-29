@@ -26,19 +26,20 @@ class VolatilityMeasures(object):
         log_co = (data['Close']/data['Open']).apply(np.log)
         
         rog_satch = log_ho * (log_ho - log_co) + log_lo * (log_lo - log_co)
-        
-        def f(v):
-            return math.sqrt(252 * v.mean())
             
-        rog_satch = pd.rolling_apply(rog_satch, window, f)
+        out = pd.rolling_apply(rog_satch, window, self.f)
         
-        return rog_satch
+        return out
+        
+    def f(self, v):
+        return math.sqrt(252 * v.mean())
         
         
 if __name__=='__main__':
     vol = VolatilityMeasures()
     data = pd.read_csv('/home/w/code/python/trading/data/50etf.csv')
     clcl = vol.close_close(data, 30)
+    rs = vol.rogers_satchell(data, 30)
     #clcl2 = vol.close_close(data, 90)
     #rs = vol.rogers_satchell(data, 30)
     #rs.plot()
