@@ -23,7 +23,8 @@ class HistoricalPrices(object):
         try:
             s = requests.Session()
             headers = {'Authorization' : 'Bearer ' + self.access_token}
-            params  = {'instrument' : self.instrument}
+            params  = {'instrument' : self.instrument, 'granularity' : 'M1',
+                       'count' : '5000'}
             url = 'https://' + self.api_domain + '/v1/candles'
             req = requests.Request('GET', url, headers=headers, params=params)
             prep = req.prepare()
@@ -40,7 +41,11 @@ class HistoricalPrices(object):
         df = df.drop('complete', axis=1)
         df['time'] = pd.to_datetime(df['time'])
         indexed_df = df.set_index('time')
-
+        
+        # rearrange columns
+        cols = ['openBid', 'openAsk', 'highBid', 'highAsk', 'lowBid', 'lowAsk',
+                'closeBid', 'closeAsk', 'volume']
+        indexed_df = indexed_df[cols]
         return indexed_df
 
 if __name__ == '__main__':
