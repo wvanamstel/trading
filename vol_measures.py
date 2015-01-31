@@ -31,6 +31,13 @@ class VolatilityMeasures(object):
         
         return out
         
+    def garman_klass(self, data, window=60):
+        log_hl = (data['High'] / data['Low']).apply(np.log)
+        log_co = (data['Close'] / data['Open']).apply(np.log)
+        log_oc = (data['Open'] / data['Close']).apply(np.log)
+        
+        
+        
     def f(self, v):
         return math.sqrt(252 * v.mean())
         
