@@ -21,15 +21,11 @@ class HistoricalPrices(object):
     def fetch_prices(self):
         # open a session with oanda and fetch prices
         try:
-            s = requests.Session()
             headers = {'Authorization' : 'Bearer ' + self.access_token}
-            params  = {'instrument' : self.instrument, 'granularity' : 'M1',
-                       'count' : '5000'}
+            params  = {'instrument' : self.instrument, 'granularity' : 'S5',
+                       'count' : '50'}
             url = 'https://' + self.api_domain + '/v1/candles'
-            req = requests.Request('GET', url, headers=headers, params=params)
-            prep = req.prepare()
-            resp = s.send(prep, verify=False)
-            s.close()
+            resp = requests.get(url, headers=headers, params=params)
         except Exception as e:
             print 'Error fetching historical prices' + str(e)
             return -1
