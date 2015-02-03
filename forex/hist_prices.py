@@ -12,9 +12,11 @@ from settings import API_DOMAIN, ACCESS_TOKEN
 
 
 class HistoricalPrices(object):
-    def __init__(self, instrument, window, access_token, api_domain):
+    def __init__(self, instrument, num_quotes, 
+                 granularity, access_token, api_domain):
         self.instrument = instrument
-        self.window = window
+        self.num_quotes = num_quotes
+        self.granularity = granularity
         self.access_token = access_token
         self.api_domain = API_DOMAIN
 
@@ -22,8 +24,9 @@ class HistoricalPrices(object):
         # open a session with oanda and fetch prices
         try:
             headers = {'Authorization' : 'Bearer ' + self.access_token}
-            params  = {'instrument' : self.instrument, 'granularity' : 'S5',
-                       'count' : '50'}
+            params  = {'instrument' : self.instrument, 
+                       'granularity' : self.granularity,
+                       'count' : self.num_quotes}
             url = 'https://' + self.api_domain + '/v1/candles'
             resp = requests.get(url, headers=headers, params=params)
         except Exception as e:
@@ -45,5 +48,5 @@ class HistoricalPrices(object):
         return indexed_df
 
 if __name__ == '__main__':
-    hist = HistoricalPrices('EUR_USD', 30, ACCESS_TOKEN, API_DOMAIN)
+    hist = HistoricalPrices('EUR_USD', 30, 'M1', ACCESS_TOKEN, API_DOMAIN)
     prices = hist.fetch_prices()
