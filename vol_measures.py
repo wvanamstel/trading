@@ -4,49 +4,62 @@ Created on Fri Jan 23 16:22:57 2015
 
 @author: w
 """
-import math
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 
 class VolatilityMeasures(object):
-    def __init__(self):
-        pass
-    
-    def close_close(self,data, window=60):
-        log_return = (data['Close']/data['Close'].shift(1)).apply(np.log)
-        vol = pd.rolling_std(log_return, window=window) * math.sqrt(252)
-        vol.index = data['Date']
+    def __init__(self, data, window=60, total_days=252):
+        self.data = data
+        self.window = window
+        self.total_days = total_days
+        
+    def close_close(self):
+        log_return = (self.data['Close']/self.data['Close'].shift(1)).apply(np.log)
+        vol = pd.rolling_std(log_return, self.window) * np.sqrt(self.total_days)
+        vol.index = self.data['Date']
         
         return vol
         
-    def rogers_satchell(self, data, window=60):
-        log_ho = (data['High']/data['Open']).apply(np.log)
-        log_lo = (data['Low']/data['Open']).apply(np.log)
-        log_co = (data['Close']/data['Open']).apply(np.log)
+    def rogers_satchell(self):
+        #rogers satchell yoon estimator
+        log_hc = (self.data['High']/self.data['Close']).apply(np.log)
+        log_ho = (self.data['High']/self.data['Open']).apply(np.log)
+        log_lo = (self.data['Low']/self.data['Open']).apply(np.log)
+        log_lc = (self.data['Low']/self.data['Close']).apply(np.log)
         
-        rog_satch = log_ho * (log_ho - log_co) + log_lo * (log_lo - log_co)
+        rsy = log_hc * log_ho + log_lc * log_lo
             
-        out = pd.rolling_apply(rog_satch, window, self.f)
+        out = (pd.rolling_mean(rsy, self.window) * self.total_days)\
+              .apply(lambda x: x if not x else np.sqrt(x))
+        
+        out.index = self.data['Date']
         
         return out
+    
+    def parkinson(self):
+        log_hl = (self.data['High']/self.data['Low']).apply(np.log)
+
+        park = (1/(4*np.log(2))) * log_hl**2
         
-    def garman_klass(self, data, window=60):
-        log_hl = (data['High'] / data['Low']).apply(np.log)
-        log_co = (data['Close'] / data['Open']).apply(np.log)
-        log_oc = (data['Open'] / data['Close']).apply(np.log)
+        out = (pd.rolling_mean(park, self.window) * self.total_days)\
+              .apply(lambda x: x if not x else np.sqrt(x))
+              
+        return out
         
         
-        
-    def f(self, v):
-        return math.sqrt(252 * v.mean())
+    def garman_klass(self):
+        log_hl = (self.data['High'] / self.data['Low']).apply(np.log)
+        log_co = (self.data['Close'] / self.data['Open']).apply(np.log)
+        log_oc = (self.data['Open'] / self.data['Close']).apply(np.log)
         
         
 if __name__=='__main__':
-    vol = VolatilityMeasures()
     data = pd.read_csv('/home/w/code/python/trading/data/50etf.csv')
-    clcl = vol.close_close(data, 30)
-    rs = vol.rogers_satchell(data, 30)
+    vol = VolatilityMeasures(data)
+    clcl = vol.close_close()
+    rs = vol.rogers_satchell()
+    p = vol.parkinson()
     #clcl2 = vol.close_close(data, 90)
     #rs = vol.rogers_satchell(data, 30)
     #rs.plot()
@@ -54,11 +67,12 @@ if __name__=='__main__':
     #data['Close'].plot()
     
     fig, ax1 = plt.subplots()
-    ax1.plot(clcl, color='red', lw=2)
+    ax1.plot(p, color='red', lw=2)
     ax1.set_ylabel('30d Close/Close vol', color='red')
 
     ax2 = ax1.twinx()
-    ax2.plot(data['Close'], color='blue', lw=2)
-    ax2.set_ylabel('Price', color='blue')
+    #ax2.plot(data['Close'], color='blue', lw=2)
+    #ax2.set_ylabel('Price', color='blue')
+    ax2.plot(rs)
     plt.title('2 lines')
     plt.show()
