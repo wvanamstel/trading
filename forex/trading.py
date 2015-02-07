@@ -14,7 +14,7 @@ from settings import STREAM_DOMAIN, API_DOMAIN, ACCESS_TOKEN, ACCOUNT_ID
 from strategy import TestStrategy
 from streaming import StreamingForexPrices
 
-def trade(events, strategy, execution):
+def trade(events, strategy, portfolio, execution):
 #==============================================================================
 #     Carries out infinite while loop that polls the events queue and directs
 #     each event to either the strategy component or execution handler. Loop
