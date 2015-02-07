@@ -18,13 +18,16 @@ class StreamingForexPrices(object):
         self.account_id = account_id
         self.instruments = instruments
         self.events_queue = events_queue
+        self.cur_bid = None
+        self.cur_ask = None
         
     def connect_to_stream(self):
         try:
             s = requests.Session()
             url = "https://" + self.domain + "/v1/prices"
             headers = {'Authorization' : 'Bearer ' + self.access_token}
-            params = {'instruments' : self.instruments, 'accountId' : self.account_id}
+            params = {'instruments' : self.instruments, 
+                      'accountId' : self.account_id}
             req = requests.Request('GET', url, headers=headers, params=params)
             pre = req.prepare()
             resp = s.send(pre, stream=True, verify=False)
@@ -53,5 +56,7 @@ class StreamingForexPrices(object):
                     time = msg['tick']['time']
                     bid = msg['tick']['bid']
                     ask = msg['tick']['ask']
+                    self.cur_bid = bid
+                    self.cur_ask = ask
                     tev = TickEvent(instrument, time, bid, ask)
                     self.events_queue.put(tev)
