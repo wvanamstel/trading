@@ -20,7 +20,7 @@ class VolatilityMeasures(object):
         vol.index = self.data['Date']
         
         return vol
-        
+
     def rogers_satchell(self):
         #rogers satchell yoon estimator
         log_hc = (self.data['High']/self.data['Close']).apply(np.log)
@@ -29,10 +29,8 @@ class VolatilityMeasures(object):
         log_lc = (self.data['Low']/self.data['Close']).apply(np.log)
         
         rsy = log_hc * log_ho + log_lc * log_lo
-            
-        out = (pd.rolling_mean(rsy, self.window) * self.total_days)\
-              .apply(lambda x: x if not x else np.sqrt(x))
         
+        out = self.annualise(rsy)   
         out.index = self.data['Date']
         
         return out
@@ -42,16 +40,20 @@ class VolatilityMeasures(object):
 
         park = (1/(4*np.log(2))) * log_hl**2
         
-        out = (pd.rolling_mean(park, self.window) * self.total_days)\
-              .apply(lambda x: x if not x else np.sqrt(x))
-              
-        return out
+        out = self.annualise(park)
+        out.index = self.data['Date']
         
+        return out
         
     def garman_klass(self):
         log_hl = (self.data['High'] / self.data['Low']).apply(np.log)
         log_co = (self.data['Close'] / self.data['Open']).apply(np.log)
         log_oc = (self.data['Open'] / self.data['Close']).apply(np.log)
+        
+        
+    def annualise(self, daily_vols):
+        return (pd.rolling_mean(daily_vols, self.window) * self.total_days)\
+               .apply(lambda x: x if not x else np.sqrt(x))
         
         
 if __name__=='__main__':
