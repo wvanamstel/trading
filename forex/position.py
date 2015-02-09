@@ -24,18 +24,18 @@ class Position(object):
             mult = -1
         return mult * (self.cur_price - self.avg_price)
     
-    def cal_profit_base(self):
+    def calc_profit_base(self):
         # calc nominal pnl of total position
         pips = self.calc_pips()
         return pips * self.exposure / self.cur_price
     
-    def cal_profit_perc(self):
+    def calc_profit_perc(self):
         # calc relative pnl of total position
         return self.profit_base / self.exposure * 100.
     
     def update_position_price(self, cur_price):
         # update pnl metrics to current instrument price
         self.cur_price = cur_price
-        self.profit_base = self.cal_profit_base()
-        self.profit_perc = self.cal_profit_perc()
+        self.profit_base = self.calc_profit_base()
+        self.profit_perc = self.calc_profit_perc()
         

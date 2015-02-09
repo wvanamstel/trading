@@ -51,11 +51,13 @@ class StreamingForexPrices(object):
                     print 'Error converting into json:\n' + str(e)
                     return
                 if msg.has_key('instrument') or msg.has_key('tick'):
-                    print msg
                     instrument = msg['tick']['instrument']
                     time = msg['tick']['time']
                     bid = msg['tick']['bid']
                     ask = msg['tick']['ask']
+                    print instrument + '  ' + str(bid) + '  --  ' + str(ask) +\
+                          '  ' + str(time)
+                    
                     self.cur_bid = bid
                     self.cur_ask = ask
                     tev = TickEvent(instrument, time, bid, ask)

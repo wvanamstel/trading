@@ -12,7 +12,7 @@ class GetData(object):
         IN: all strings; symbol, interval in secs, time period, open/close/etc
         OUT: data frame with historical minute prices
     '''
-    def __init__(self, interval='60', period='1d', dat='d,o,h,l,c,v'):
+    def __init__(self, interval='60', period='5d', dat='d,o,h,l,c,v'):
         self.interval = interval  # default is 60 seconds
         self.period = period  # number of days history, default is 5
         self.dat = dat  # 'date', 'open', 'high', etc
@@ -98,15 +98,18 @@ class GetData(object):
 
 
 if __name__ == '__main__':
-    a = GetData()
-    lst = ['EURUSD']
+    a = GetData(period='1d')
+    lst = 'JNPR'
+    quotes = a.get_minute_data(lst)
     #test = a.get_minute_data('EURUSD')
     
-    for i in range(5):
-        for sym in ['EURUSD',2]:
-            print time.ctime()
-            print sym + ' ' + a.get_rt_quote(sym)[0]
-            
-        print '========================'
-        time.sleep(60)
+#==============================================================================
+#     for i in range(5):
+#         for sym in ['EURUSD',2]:
+#             print time.ctime()
+#             print sym + ' ' + a.get_rt_quote(sym)[0]
+#             
+#         print '========================'
+#         time.sleep(60)
+#==============================================================================
 

@@ -17,7 +17,6 @@ class VolatilityMeasures(object):
     def close_close(self):
         log_return = (self.data['Close']/self.data['Close'].shift(1)).apply(np.log)
         vol = pd.rolling_std(log_return, self.window) * np.sqrt(self.total_days)
-        vol.index = self.data['Date']
 
         return vol
 
@@ -30,7 +29,6 @@ class VolatilityMeasures(object):
 
         rsy = log_hc * log_ho + log_lc * log_lo
         out = self.annualise(rsy)
-        out.index = self.data['Date']
 
         return out
 
@@ -39,7 +37,6 @@ class VolatilityMeasures(object):
 
         park = (1/(4*np.log(2))) * log_hl**2
         out = self.annualise(park)
-        out.index = self.data['Date']
 
         return out
 
@@ -50,7 +47,6 @@ class VolatilityMeasures(object):
 
         gk = 1./2 * log_hl**2 - (2 * np.log(2) - 1) * log_co**2
         out = self.annualise(gk)
-        out.index = self.data['Date']
 
         return out
 
@@ -66,7 +62,6 @@ class VolatilityMeasures(object):
         gkyz = log_oc**2 + 1./2 * log_hl**2 - (2*np.log(2) - 1)*log_co**2
 
         out = self.annualise(gkyz)
-        out.index = self.data['Date']
 
         return out
 
@@ -87,7 +82,6 @@ class VolatilityMeasures(object):
         k = 0.34/(1. + (self.window + 1.)/(self.window - 1.))
 
         out = (s2o + k * s2c + (1-k)*s2rs).apply(np.sqrt)
-        out.index = self.data['Date']
 
         return out
 
