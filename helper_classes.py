@@ -2,6 +2,8 @@
 
 import numpy as np
 import pandas as pd
+import pandas.io.data as web
+import datetime
 import urllib2
 import time
 import re
@@ -63,7 +65,29 @@ class GetData(object):
         return quotes_out
 
     def get_daily_data(self, symbol):
-        pass
+        end = datetime.date.today()
+        t = datetime.timedelta(days=360)
+        start = end - t
+        
+        quotes = web.DataReader(symbol.upper(), 'google', start, end)
+        
+        return quotes
+        
+    def get_china_data(self, symbol, adjusted=True):
+        end = datetime.date.today()
+        t = datetime.timedelta(days=360)
+        start = end - t
+        symbol = symbol + '.SS'        
+        
+        quotes = web.DataReader(symbol, 'yahoo', start, end)
+        # adjust for divs/splits if required, default is true
+        if adjusted:
+            adj = quotes['Adj Close']/quotes['Close']
+            out = quotes[['Open', 'High', 'Low', 'Close']] * adj
+            out['Volume'] = quotes['Volume']
+            return out
+        else:
+            return quotes
 
     def get_multiple_quotes(self, symbol_list):
         '''
